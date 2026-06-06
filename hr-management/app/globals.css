@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+@theme {
+  --font-headline: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+  --radius-2xl: 1.5rem;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 220.9 39.3% 11%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
+    --radius: 0.75rem;
+
+    /* Brand */
+    --brand-50: 239 100% 97%;
+    --brand-100: 239 100% 94%;
+    --brand-500: 239 84% 67%;
+    --brand-600: 239 84% 57%;
+    --brand-700: 239 84% 47%;
+  }
+
+  .dark {
+    --background: 0 0% 0%; /* #000000 Deep Black */
+    --foreground: 210 20% 98%;
+    --card: 0 0% 8%; /* #131313 Surface */
+    --card-foreground: 210 20% 98%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 243 75% 59%; /* Indigo 600 #4f46e5 */
+    --primary-foreground: 210 20% 98%;
+    --secondary: 240 5% 10%; /* #1a1a1a */
+    --secondary-foreground: 210 20% 98%;
+    --muted: 240 5% 15%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 240 5% 15%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 240 5% 15%;
+    --input: 240 5% 15%;
+    --ring: 243 75% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    @apply bg-background text-foreground;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Gradient text utility */
+@layer utilities {
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400;
+  }
+  .glass {
+    @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+  .glass-card {
+    @apply bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl;
+  }
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200;
+  }
+  .sidebar-link-active {
+    @apply bg-indigo-500/15 text-indigo-400 shadow-sm;
+  }
+  .sidebar-link-inactive {
+    @apply text-slate-400 hover:text-slate-100 hover:bg-slate-800/60;
+  }
+  .metric-card {
+    @apply bg-slate-900/80 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-5 hover:border-slate-600/70 transition-all duration-300;
+  }
+  .btn-primary {
+    @apply bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl px-5 py-2.5 hover:from-indigo-600 hover:to-purple-700 transition-all duration-200 shadow-lg shadow-indigo-500/20 active:scale-95;
+  }
+  .input-dark {
+    @apply bg-slate-800/60 border border-slate-700 rounded-xl px-4 py-2.5 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all;
+  }
+}
+
+/* Animated gradient bg */
+.animated-bg {
+  background: radial-gradient(ellipse at 0% 0%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 100% 100%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+              rgb(2 6 23);
+}
+
+/* Glow effects */
+.glow-indigo {
+  box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+}
+.glow-purple {
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.15);
+}
+
+/* Chart containers */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+.recharts-default-tooltip {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 12px !important;
+  color: #f1f5f9 !important;
+}
+
+/* Stat number animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.stat-number {
+  animation: countUp 0.4s ease-out;
+}
+
+/* Pulse dot */
+@keyframes pulse-ring {
+  0% { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+.pulse-dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse-ring 1.5s ease-out infinite;
+}

@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Alembic generated
+alembic/versions/*.pyc
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Local SQLite database (never commit)
+*.db
+hrms.db
+
+# Scratch / migration scripts (not needed in prod)
+alter_*.py
+create_table.py
+clear_locks.py
+add_col.py
+seed_*.py
+update_and_seed.py
+test_*.py
+
+# OS
+.DS_Store
+Thumbs.db

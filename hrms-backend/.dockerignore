@@ -1,0 +1,25 @@
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite databases
+*.db
+hrms.db
+
+# Git
+.git/
+
+# OS specific
+.DS_Store
+Thumbs.db
