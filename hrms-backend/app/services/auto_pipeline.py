@@ -40,6 +40,13 @@ def run_auto_pipeline(
     scored = []
     for app in applications:
         try:
+            # If already scored during apply, just use existing score
+            if app.ai_score is not None and app.ai_score > 0 and app.ai_details:
+                scored.append({"app": app, "score": app.ai_score})
+                app.status = "SCREENING"
+                db.commit()
+                continue
+
             # Get resume text (already extracted 
             # when candidate applied)
             resume_text = app.resume_text or ""

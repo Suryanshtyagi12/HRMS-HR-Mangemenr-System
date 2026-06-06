@@ -877,15 +877,30 @@ async def public_apply(
         
     contents = await resume.read()
     
-    from app.ai.utils.pdf_extractor import extract_text_from_pdf
-    resume_text = extract_text_from_pdf(contents)
+    from app.ai.resume_screener import screen_resume_against_job
+    req_list = job.requirements if job.requirements else []
+    desc_str = job.description or ""
+    
+    # Call Gemini to screen the resume immediately
+    ai_res = screen_resume_against_job(
+        pdf_bytes=contents,
+        job_title=job.title,
+        job_description=desc_str,
+        job_requirements=req_list
+    )
     
     app = Application(
         job_posting_id=job.id,
         candidate_name=full_name,
         candidate_email=email,
         candidate_phone=phone,
-        resume_text=resume_text,
+        resume_text=ai_res.get("raw_text", ""),
+        ai_score=ai_res.get("score", 0),
+        ai_summary=ai_res.get("summary", ""),
+        ai_skills_match=ai_res.get("skills_match", []),
+        ai_red_flags=ai_res.get("red_flags", []),
+        ai_details=ai_res,
+        ai_recommendation=ai_res.get("recommendation", "HOLD"),
         status="APPLIED"
     )
     db.add(app)
