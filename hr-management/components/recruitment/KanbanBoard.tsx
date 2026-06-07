@@ -43,7 +43,7 @@ export function KanbanBoard({ pipeline, onStatusChange, onCandidateClick, showRe
   };
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-250px)] items-start">
+    <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-250px)] items-start snap-x snap-mandatory">
       {COLUMNS.map((col) => {
         const columnApps = pipeline[col] || [];
         // Sort by ai_score highest first
@@ -52,7 +52,7 @@ export function KanbanBoard({ pipeline, onStatusChange, onCandidateClick, showRe
         return (
           <div 
             key={col} 
-            className="flex-shrink-0 w-80 bg-muted/40 rounded-xl flex flex-col h-full max-h-full border border-muted/50"
+            className="flex-shrink-0 w-80 bg-muted/40 rounded-xl flex flex-col h-full max-h-full border border-muted/50 snap-center"
             onDragOver={handleDragOver}
             onDrop={(e) => handleDrop(e, col)}
           >
@@ -83,7 +83,7 @@ export function KanbanBoard({ pipeline, onStatusChange, onCandidateClick, showRe
 
       {showRejected && (
         <div 
-          className="flex-shrink-0 w-80 bg-rose-50/50 rounded-xl flex flex-col h-full max-h-full border border-rose-100"
+          className="flex-shrink-0 w-80 bg-rose-50/50 rounded-xl flex flex-col h-full max-h-full border border-rose-100 snap-center"
           onDragOver={handleDragOver}
           onDrop={(e) => handleDrop(e, 'REJECTED')}
         >

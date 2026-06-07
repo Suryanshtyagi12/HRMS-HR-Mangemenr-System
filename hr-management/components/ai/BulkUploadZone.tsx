@@ -45,7 +45,7 @@ export function BulkUploadZone({ onProcess, isProcessing, progress }: BulkUpload
     <div className="space-y-4">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed rounded-lg p-10 text-center transition-colors cursor-pointer ${
+        className={`border-2 border-dashed rounded-lg p-4 md:p-10 text-center transition-colors cursor-pointer ${
           isDragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'
         } ${isProcessing ? 'opacity-50 pointer-events-none' : ''}`}
       >

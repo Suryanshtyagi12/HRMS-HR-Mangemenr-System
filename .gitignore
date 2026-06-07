@@ -11,3 +11,11 @@ Thumbs.db
 # Misc
 .vscode/
 .idea/
+
+# Ignore markdown files except README.md
+*.md
+!README.md
+
+# Scratch scripts and text files
+full_tree.txt
+tree_script.py

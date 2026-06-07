@@ -98,7 +98,7 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
       </div>
 
       {step === 1 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>First Name *</Label>
             <Input {...personalForm.register('firstName')} />
@@ -124,11 +124,11 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
       )}
 
       {step === 2 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Department *</Label>
             <Select onValueChange={(v) => employmentForm.setValue('departmentId', v)}>
-              <SelectTrigger><SelectValue placeholder="Select Dept" /></SelectTrigger>
+              <SelectTrigger className="h-11 text-base md:text-sm"><SelectValue placeholder="Select Dept" /></SelectTrigger>
               <SelectContent>
                 {departments.map(d => <SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>)}
               </SelectContent>
@@ -149,7 +149,7 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
           <div className="space-y-2">
             <Label>Employment Type *</Label>
             <Select onValueChange={(v: any) => employmentForm.setValue('employmentType', v)}>
-              <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
+              <SelectTrigger className="h-11 text-base md:text-sm"><SelectValue placeholder="Select Type" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="FULL_TIME">Full Time</SelectItem>
                 <SelectItem value="PART_TIME">Part Time</SelectItem>
@@ -162,7 +162,7 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
       )}
 
       {step === 3 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Initial Password *</Label>
             <Input type="password" {...accountForm.register('password')} />
@@ -170,7 +170,7 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
           <div className="space-y-2">
             <Label>System Role *</Label>
             <Select defaultValue="EMPLOYEE" onValueChange={(v: any) => accountForm.setValue('role', v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger className="h-11 text-base md:text-sm"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="EMPLOYEE">Employee</SelectItem>
                 <SelectItem value="HR_RECRUITER">HR Recruiter</SelectItem>
@@ -186,12 +186,12 @@ export function AddEmployeeForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
       )}
 
-      <div className="flex justify-between mt-8 pt-4 border-t">
-        <Button variant="outline" onClick={() => setStep(step - 1)} disabled={step === 1}>Back</Button>
+      <div className="flex flex-col-reverse md:flex-row justify-between mt-8 pt-4 border-t gap-3">
+        <Button variant="outline" className="w-full md:w-auto" onClick={() => setStep(step - 1)} disabled={step === 1}>Back</Button>
         {step < 3 ? (
-          <Button onClick={handleNext}>Next</Button>
+          <Button className="w-full md:w-auto" onClick={handleNext}>Next</Button>
         ) : (
-          <Button onClick={onSubmit} disabled={loading}>
+          <Button className="w-full md:w-auto" onClick={onSubmit} disabled={loading}>
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />} Submit
           </Button>
         )}

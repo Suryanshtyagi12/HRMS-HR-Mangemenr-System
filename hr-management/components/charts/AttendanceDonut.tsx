@@ -2,7 +2,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
-export function AttendanceDonut({ data }: { data: any }) {
+export function AttendanceDonut({ data = { present: 85, absent: 5, onLeave: 10, total: 100 } }: { data?: any }) {
   const chartData = [
     { name: 'Present', value: data.present, color: '#10b981' }, // emerald-500
     { name: 'Absent', value: data.absent, color: '#f43f5e' }, // rose-500

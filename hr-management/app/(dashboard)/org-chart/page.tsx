@@ -37,36 +37,11 @@ export default function OrgChartPage() {
   const [highlightedNodes, setHighlightedNodes] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    api.get('/employees?limit=1000')
+    api.get('/employees/org-chart')
       .then(res => {
-        const emps = res.data?.items || [];
-        const map = new Map<string, OrgNodeType>();
-        
-        emps.forEach((e: any) => {
-          map.set(e.id, {
-            id: e.id,
-            name: `${e.first_name || e.firstName || ''} ${e.last_name || e.lastName || ''}`.trim(),
-            designation: e.designation || 'Employee',
-            department: e.department?.name || e.department || 'Unknown',
-            photoUrl: e.photo_url || e.photoUrl,
-            children: []
-          });
-        });
-        
-        const tree: OrgNodeType[] = [];
-        emps.forEach((e: any) => {
-          const node = map.get(e.id)!;
-          const managerId = e.reporting_manager_id || e.reportingManagerId;
-          if (managerId && map.has(managerId)) {
-            map.get(managerId)!.children.push(node);
-          } else {
-            tree.push(node);
-          }
-        });
-
+        const tree = res.data?.tree || [];
         if (tree.length > 0) {
           setData(tree);
-          // Expand all by default initially
           const allIds = new Set<string>();
           const traverse = (node: OrgNodeType) => {
             allIds.add(node.id);
@@ -175,33 +150,18 @@ export default function OrgChartPage() {
         </div>
       </div>
 
-      <div className="flex-1 bg-muted rounded-xl border overflow-hidden relative shadow-inner">
-        {/* Zoom Controls */}
-        <div className="absolute top-4 right-4 z-20 flex flex-col gap-2 bg-card p-1 rounded-lg border shadow-sm">
-          <Button variant="ghost" size="icon" onClick={handleZoomIn}><ZoomIn className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" onClick={handleResetZoom}><Maximize className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" onClick={handleZoomOut}><ZoomOut className="h-4 w-4" /></Button>
-        </div>
-
-        {/* Pan/Zoom Area */}
-        <div className="w-full h-full overflow-auto cursor-grab active:cursor-grabbing p-10 flex justify-center items-start">
-          <div 
-            className="transition-transform duration-200 origin-top"
-            style={{ transform: `scale(${scale})` }}
-          >
-            {data.length > 0 ? (
-              <OrgTree 
-                data={data} 
-                expandedNodes={expandedNodes} 
-                highlightedNodes={highlightedNodes} 
-                departmentColors={DEPT_COLORS}
-                onExpandToggle={toggleExpand}
-              />
-            ) : (
-              <div className="text-center text-muted-foreground py-20">Loading chart...</div>
-            )}
-          </div>
-        </div>
+      <div className="flex-1 bg-muted rounded-xl border overflow-auto max-w-[100vw] touch-pan-x touch-pan-y relative shadow-inner">
+        {data.length > 0 ? (
+          <OrgTree 
+            data={data} 
+            expandedNodes={expandedNodes} 
+            highlightedNodes={highlightedNodes} 
+            departmentColors={DEPT_COLORS}
+            onExpandToggle={toggleExpand}
+          />
+        ) : (
+          <div className="text-center text-muted-foreground py-20">Loading chart...</div>
+        )}
       </div>
     </div>
   );

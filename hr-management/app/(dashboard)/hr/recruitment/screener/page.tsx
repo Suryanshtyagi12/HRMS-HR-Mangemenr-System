@@ -85,11 +85,7 @@ export default function ScreenerPage() {
   };
 
   const updateStatus = async (id: string, status: string) => {
-    const fd = new FormData();
-    fd.append('status', status);
-    await api.patch(`/recruitment/application/${id}/status`, fd, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    await api.patch(`/recruitment/application/${id}/status`, { status });
   };
 
   const handleShortlist = async (id: string) => {
@@ -265,11 +261,10 @@ export default function ScreenerPage() {
                   </button>
                   <button 
                     onClick={() => handleShortlist(selectedResult.id)}
-                    disabled={selectedResult.status === 'SHORTLISTED'}
-                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:opacity-90 font-medium text-sm transition-opacity shadow-sm flex items-center space-x-2 disabled:opacity-50"
+                    className="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl hover:opacity-90 font-medium text-sm transition-opacity shadow-sm flex items-center space-x-2"
                   >
                     <HowToReg size={18} />
-                    <span>Shortlist</span>
+                    <span>{selectedResult.status === 'SHORTLISTED' ? 'Shortlisted' : 'Shortlist'}</span>
                   </button>
                 </div>
               </div>

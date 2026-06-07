@@ -72,7 +72,7 @@ export default function ClockButton({ employeeId, initialStatus, initialClockIn 
       <button 
         onClick={handleClock}
         disabled={loading}
-        className={`z-10 group relative w-48 h-48 rounded-full shadow-xl flex flex-col items-center justify-center text-white transform hover:scale-105 active:scale-95 transition-all duration-300 ${
+        className={`z-10 group relative w-full h-20 md:w-48 md:h-48 rounded-2xl md:rounded-full shadow-xl flex flex-col md:flex-col items-center justify-center text-white transform hover:scale-105 active:scale-95 transition-all duration-300 ${
           isClockedIn 
             ? 'bg-gradient-to-b from-rose-400 to-rose-600 shadow-rose-500/30' 
             : 'bg-gradient-to-b from-emerald-400 to-emerald-600 shadow-emerald-500/30'
@@ -84,7 +84,7 @@ export default function ClockButton({ employeeId, initialStatus, initialClockIn 
         ) : (
            <Fingerprint size={48} className="mb-2" />
         )}
-        <span className="text-2xl font-black font-headline tracking-wide">
+        <span className="text-xl md:text-2xl font-black font-headline tracking-wide">
            {isClockedIn ? 'CLOCK OUT' : 'CLOCK IN'}
         </span>
       </button>

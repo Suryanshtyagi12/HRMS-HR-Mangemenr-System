@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useEmployeeStore } from '@/store/employeeStore';
 import { EmployeeCard } from '@/components/employees/EmployeeCard';
 import { AddEmployeeForm } from '@/components/employees/AddEmployeeForm';
@@ -9,12 +9,50 @@ import { LayoutGrid, List, Plus, Search, MoreVertical, Upload } from 'lucide-rea
 import Link from 'next/link';
 import { RoleGuard } from '@/components/layout/RoleGuard';
 import { useEmployees } from '@/hooks/useEmployees';
+import { api } from '@/lib/api';
+import { toast } from 'sonner';
 
 export default function AdminEmployeesPage() {
   const { viewMode, setViewMode, searchQuery, setSearchQuery } = useEmployeeStore();
   const [isAddOpen, setIsAddOpen] = useState(false);
-  const { data: employeesData, isLoading: loading, refetch } = useEmployees({ search: searchQuery });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [departmentId, setDepartmentId] = useState('');
+  const [departments, setDepartments] = useState<any[]>([]);
+
+  useEffect(() => {
+    api.get('/employees/departments')
+      .then(res => setDepartments(res.data))
+      .catch(console.error);
+  }, []);
+
+  const { data: employeesData, isLoading: loading, refetch } = useEmployees({ 
+    search: searchQuery,
+    department_id: departmentId || undefined
+  });
   const employees = Array.isArray(employeesData) ? employeesData : (employeesData?.items || employeesData?.employees || []);
+
+  const handleImportCsv = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsImporting(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      await api.post('/employees/import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      toast.success('Import successful');
+      refetch();
+    } catch (error) {
+      console.error('Import error:', error);
+      toast.error('Import failed');
+    } finally {
+      setIsImporting(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   return (
     <RoleGuard allowedRoles={['ADMIN', 'HR_RECRUITER', 'SENIOR_MANAGER']}>
@@ -27,8 +65,10 @@ export default function AdminEmployeesPage() {
             <p className="text-sm text-muted-foreground mt-1 font-body">Manage your team members, roles, and status across the organization.</p>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" className="border-border text-muted-foreground rounded-xl hover:bg-muted hover:text-card-foreground transition-colors hidden sm:flex">
-              <Upload className="w-4 h-4 mr-2" /> Import CSV
+            <input type="file" accept=".csv" className="hidden" ref={fileInputRef} onChange={handleImportCsv} />
+            <Button onClick={() => fileInputRef.current?.click()} disabled={isImporting} variant="outline" className="border-border text-muted-foreground rounded-xl hover:bg-muted hover:text-card-foreground transition-colors hidden sm:flex">
+              {isImporting ? <div className="animate-spin h-4 w-4 mr-2 border-b-2 border-current rounded-full" /> : <Upload className="w-4 h-4 mr-2" />}
+              {isImporting ? 'Importing...' : 'Import CSV'}
             </Button>
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger asChild>
@@ -37,7 +77,7 @@ export default function AdminEmployeesPage() {
                   Add Employee
                 </button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[600px] rounded-2xl">
+              <DialogContent className="w-[95vw] md:max-w-lg mx-auto rounded-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle className="font-headline text-xl">Add New Employee</DialogTitle>
                 </DialogHeader>
@@ -76,12 +116,15 @@ export default function AdminEmployeesPage() {
               </button>
             </div>
             
-            <select className="appearance-none bg-muted border border-border text-card-foreground rounded-xl px-4 py-2 pr-8 focus:ring-2 focus:ring-indigo-500 outline-none hover:bg-card cursor-pointer font-medium w-full sm:w-auto min-h-[44px] text-base md:text-sm">
-              <option>All Departments</option>
-              <option>Engineering</option>
-              <option>Design</option>
-              <option>Marketing</option>
-              <option>Product</option>
+            <select 
+              value={departmentId}
+              onChange={(e) => setDepartmentId(e.target.value)}
+              className="appearance-none bg-muted border border-border text-card-foreground rounded-xl px-4 py-2 pr-8 focus:ring-2 focus:ring-indigo-500 outline-none hover:bg-card cursor-pointer font-medium w-full sm:w-auto min-h-[44px] text-base md:text-sm"
+            >
+              <option value="">All Departments</option>
+              {departments.map(dept => (
+                <option key={dept.id} value={dept.id}>{dept.name}</option>
+              ))}
             </select>
           </div>
         </div>
@@ -100,7 +143,7 @@ export default function AdminEmployeesPage() {
         ) : (
           <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
             <div className="hidden md:block overflow-x-auto w-full">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[600px] text-left border-collapse">
                 <thead className="bg-card border-b border-border sticky top-0 z-10">
                   <tr>
                     <th className="py-4 px-6 font-bold text-xs text-muted-foreground uppercase tracking-wider">Employee</th>

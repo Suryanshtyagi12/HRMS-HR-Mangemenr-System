@@ -70,7 +70,7 @@ export function HRChatbot() {
       
       {/* Expanded Panel */}
       {isOpen && (
-        <div className="fixed inset-0 sm:static sm:inset-auto w-full h-full sm:w-[380px] sm:h-[500px] bg-card sm:rounded-2xl shadow-2xl sm:border border-border flex flex-col overflow-hidden sm:mb-4 transition-all duration-300 animate-in zoom-in-95 z-[100] sm:z-auto">
+        <div className="fixed inset-0 md:static md:inset-auto w-full h-full md:w-[380px] md:h-[500px] bg-card md:rounded-2xl shadow-2xl md:border border-border flex flex-col overflow-hidden md:mb-4 transition-all duration-300 animate-in zoom-in-95 z-[100] md:z-auto">
           
           {/* Header */}
           <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 flex items-center justify-between shrink-0">
@@ -185,7 +185,7 @@ export function HRChatbot() {
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
           "w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg flex items-center justify-center text-white hover:shadow-xl hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-500/30 group z-[101]",
-          isOpen ? "hidden sm:flex" : "flex"
+          isOpen ? "hidden md:flex" : "flex"
         )}
       >
         {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6 group-hover:scale-110 transition-transform" />}

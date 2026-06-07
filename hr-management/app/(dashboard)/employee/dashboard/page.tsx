@@ -64,7 +64,7 @@ export default function EmployeeDashboard() {
 
 
       {/* Row 2: 4 Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-8">
         <div className="bg-card rounded-[16px] shadow-sm hover:shadow-hover border border-border p-5 transition-all duration-200 hover:-translate-y-0.5 flex flex-col justify-between group">
           <div className="flex justify-between items-center mb-4">
             <p className="text-[13px] text-muted-foreground font-medium">Attendance %</p>

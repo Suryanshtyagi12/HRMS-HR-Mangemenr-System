@@ -23,9 +23,6 @@ export default function AIInsightsPage() {
     }
   };
 
-  useEffect(() => {
-    generateReport();
-  }, []);
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-300">
@@ -40,9 +37,17 @@ export default function AIInsightsPage() {
           className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl px-5 py-2.5 font-semibold text-sm hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2"
         >
           {generating ? <Loader2 size={20} className="animate-spin" /> : <Sparkles size={20} />}
-          Regenerate Report
+          {report ? 'Regenerate Report' : 'Generate Report'}
         </button>
       </div>
+
+      {!report && !generating && !reportError && (
+        <div className="p-12 flex flex-col justify-center items-center text-muted-foreground gap-4 mt-12 bg-card rounded-2xl border border-border">
+            <Lightbulb size={48} className="text-indigo-300 opacity-50 mb-2" />
+            <p className="text-lg font-medium text-foreground">Ready to generate AI Insights</p>
+            <p className="text-sm text-center max-w-md">Click the generate button above to analyze your company data using Gemini AI. This process takes a few moments.</p>
+        </div>
+      )}
 
       {/* Error */}
       {reportError && (
@@ -77,11 +82,11 @@ export default function AIInsightsPage() {
               </div>
 
               {/* Executive Summary */}
-              <div className="p-6 bg-indigo-50 border-l-4 border-indigo-500 rounded-r-xl shadow-sm">
-                  <h3 className="font-semibold text-indigo-900 mb-2 text-lg">
+              <div className="p-6 bg-indigo-50 dark:bg-indigo-500/10 border-l-4 border-indigo-500 rounded-r-xl shadow-sm">
+                  <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2 text-lg">
                       Executive Summary
                   </h3>
-                  <p className="text-sm md:text-base text-indigo-800 leading-relaxed whitespace-pre-line">
+                  <p className="text-sm md:text-base text-indigo-800 dark:text-indigo-200/80 leading-relaxed whitespace-pre-line">
                       {report.executive_summary}
                   </p>
               </div>
@@ -96,15 +101,15 @@ export default function AIInsightsPage() {
                       </h3>
                       <div className="space-y-3">
                       {(report.highlights || []).map((h: any, i: number) => (
-                          <div key={i} className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl">
-                              <div className="font-medium text-emerald-800 text-sm">
+                          <div key={i} className="p-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl">
+                              <div className="font-medium text-emerald-800 dark:text-emerald-400 text-sm">
                                   {h.title}
                               </div>
-                              <div className="text-xs text-emerald-600 mt-1">
+                              <div className="text-xs text-emerald-600 dark:text-emerald-500 mt-1">
                                   {h.detail}
                               </div>
                               {h.metric && (
-                                  <div className="mt-2 inline-block px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                                  <div className="mt-2 inline-block px-2 py-0.5 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 rounded-full text-xs font-medium">
                                       {h.metric}
                                   </div>
                               )}
@@ -120,15 +125,15 @@ export default function AIInsightsPage() {
                       </h3>
                       <div className="space-y-3">
                       {(report.concerns || []).map((c: any, i: number) => (
-                          <div key={i} className="p-4 bg-amber-50 border border-amber-100 rounded-xl">
-                              <div className="font-medium text-amber-800 text-sm">
+                          <div key={i} className="p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20 rounded-xl">
+                              <div className="font-medium text-amber-800 dark:text-amber-400 text-sm">
                                   {c.title}
                               </div>
-                              <div className="text-xs text-amber-600 mt-1">
+                              <div className="text-xs text-amber-600 dark:text-amber-500 mt-1">
                                   {c.detail}
                               </div>
                               {c.severity && (
-                                  <div className={`mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-medium ${c.severity === "HIGH" ? "bg-rose-100 text-rose-700" : "bg-amber-100 text-amber-700"}`}>
+                                  <div className={`mt-2 inline-block px-2 py-0.5 rounded-full text-xs font-medium ${c.severity === "HIGH" ? "bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400" : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"}`}>
                                       {c.severity}
                                   </div>
                               )}
@@ -144,15 +149,15 @@ export default function AIInsightsPage() {
                       </h3>
                       <div className="space-y-3">
                       {(report.recommendations || []).map((r: any, i: number) => (
-                          <div key={i} className="p-4 bg-blue-50 border border-blue-100 rounded-xl">
-                              <div className="font-medium text-blue-800 text-sm">
+                          <div key={i} className="p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl">
+                              <div className="font-medium text-blue-800 dark:text-blue-400 text-sm">
                                   {r.title}
                               </div>
-                              <div className="text-xs text-blue-600 mt-1">
+                              <div className="text-xs text-blue-600 dark:text-blue-500 mt-1">
                                   {r.detail}
                               </div>
                               {r.priority && (
-                                  <div className="mt-2 inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                  <div className="mt-2 inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full text-xs font-medium">
                                       {r.priority} priority
                                   </div>
                               )}

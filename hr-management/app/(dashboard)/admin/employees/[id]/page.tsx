@@ -12,12 +12,17 @@ import { RoleGuard } from '@/components/layout/RoleGuard';
 import { useEmployee } from '@/hooks/useEmployees';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
+import { useAuthStore } from '@/store/authStore';
+import { toast } from 'sonner';
+import { EditEmployeeModal } from '@/components/employees/EditEmployeeModal';
 
 export default function EmployeeProfilePage() {
   const params = useParams();
   const { data: employeeData, isLoading: loading } = useEmployee(params.id as string);
   const [employee, setEmployee] = useState<any>(null);
   const [uploading, setUploading] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     if (employeeData) {
@@ -77,10 +82,10 @@ export default function EmployeeProfilePage() {
           </div>
           
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl font-bold text-gray-900">{employee.firstName || employee.first_name} {employee.lastName || employee.last_name}</h1>
-            <p className="text-lg text-gray-500 font-medium mb-4">{employee.designation}</p>
+            <h1 className="text-3xl font-bold text-foreground">{employee.firstName || employee.first_name} {employee.lastName || employee.last_name}</h1>
+            <p className="text-lg text-muted-foreground font-medium mb-4">{employee.designation}</p>
             
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-gray-600">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1.5"><Briefcase className="w-4 h-4" /> {employee.department?.name}</div>
               <div className="flex items-center gap-1.5"><Mail className="w-4 h-4" /> {employee.email}</div>
               {employee.phone && <div className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {employee.phone}</div>}
@@ -89,9 +94,13 @@ export default function EmployeeProfilePage() {
           </div>
 
           <div className="flex gap-2 mt-4 md:mt-0">
-            <Button variant="outline">Edit Profile</Button>
-            {employee.status !== 'TERMINATED' && (
-              <Button variant="destructive" onClick={handleTerminate}><Trash className="w-4 h-4 mr-2"/> Terminate</Button>
+            {user?.role === 'ADMIN' && (
+              <>
+                <Button variant="outline" onClick={() => setEditOpen(true)}>Edit Profile</Button>
+                {employee.status !== 'TERMINATED' && (
+                  <Button variant="destructive" onClick={handleTerminate}><Trash className="w-4 h-4 mr-2"/> Terminate</Button>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -113,12 +122,12 @@ export default function EmployeeProfilePage() {
             <Card>
               <CardHeader><CardTitle>Personal Details</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1"><Label className="text-gray-500">Full Name</Label><p className="font-medium">{employee.firstName || employee.first_name} {employee.lastName || employee.last_name}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Email Address</Label><p className="font-medium">{employee.email}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Phone Number</Label><p className="font-medium">{employee.phone || '-'}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Date of Birth</Label><p className="font-medium">{employee.dateOfBirth || employee.date_of_birth ? new Date(employee.dateOfBirth || employee.date_of_birth).toLocaleDateString() : '-'}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Gender</Label><p className="font-medium">{employee.gender || '-'}</p></div>
-                <div className="space-y-1 md:col-span-2"><Label className="text-gray-500">Address</Label><p className="font-medium">{employee.address || '-'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Full Name</Label><p className="font-medium text-foreground">{employee.firstName || employee.first_name} {employee.lastName || employee.last_name}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Email Address</Label><p className="font-medium text-foreground">{employee.email}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Phone Number</Label><p className="font-medium text-foreground">{employee.phone || '-'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Date of Birth</Label><p className="font-medium text-foreground">{employee.dateOfBirth || employee.date_of_birth ? new Date(employee.dateOfBirth || employee.date_of_birth).toLocaleDateString() : '-'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Gender</Label><p className="font-medium text-foreground">{employee.gender || '-'}</p></div>
+                <div className="space-y-1 md:col-span-2"><Label className="text-muted-foreground">Address</Label><p className="font-medium text-foreground">{employee.address || '-'}</p></div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -127,11 +136,11 @@ export default function EmployeeProfilePage() {
             <Card>
               <CardHeader><CardTitle>Employment Details</CardTitle></CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-1"><Label className="text-gray-500">Department</Label><p className="font-medium">{employee.department?.name || '-'}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Designation</Label><p className="font-medium">{employee.designation}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Employment Type</Label><p className="font-medium">{employee.employmentType || employee.employment_type}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Joining Date</Label><p className="font-medium">{employee.joiningDate || employee.joining_date ? new Date(employee.joiningDate || employee.joining_date).toLocaleDateString() : '-'}</p></div>
-                <div className="space-y-1"><Label className="text-gray-500">Reporting Manager</Label><p className="font-medium">{employee.reportingManager || employee.reporting_manager ? `${(employee.reportingManager || employee.reporting_manager).first_name || (employee.reportingManager || employee.reporting_manager).firstName || 'Assigned'} ${(employee.reportingManager || employee.reporting_manager).last_name || (employee.reportingManager || employee.reporting_manager).lastName || ''}` : 'None'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Department</Label><p className="font-medium text-foreground">{employee.department?.name || '-'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Designation</Label><p className="font-medium text-foreground">{employee.designation}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Employment Type</Label><p className="font-medium text-foreground">{employee.employmentType || employee.employment_type}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Joining Date</Label><p className="font-medium text-foreground">{employee.joiningDate || employee.joining_date ? new Date(employee.joiningDate || employee.joining_date).toLocaleDateString() : '-'}</p></div>
+                <div className="space-y-1"><Label className="text-muted-foreground">Reporting Manager</Label><p className="font-medium text-foreground">{employee.reportingManager || employee.reporting_manager ? `${(employee.reportingManager || employee.reporting_manager).first_name || (employee.reportingManager || employee.reporting_manager).firstName || 'Assigned'} ${(employee.reportingManager || employee.reporting_manager).last_name || (employee.reportingManager || employee.reporting_manager).lastName || ''}` : 'None'}</p></div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -139,6 +148,14 @@ export default function EmployeeProfilePage() {
           <TabsContent value="attendance"><Card><CardContent className="p-10 text-center text-gray-500">Attendance data coming soon...</CardContent></Card></TabsContent>
           <TabsContent value="performance"><Card><CardContent className="p-10 text-center text-gray-500">Performance reviews coming soon...</CardContent></Card></TabsContent>
         </Tabs>
+
+        {employee && (
+          <EditEmployeeModal 
+            open={editOpen} 
+            onOpenChange={setEditOpen} 
+            employee={employee} 
+          />
+        )}
       </div>
     </RoleGuard>
   );

@@ -30,6 +30,66 @@ def create_department(
     return service.create_department(data)
 
 
+import csv
+import io
+
+@router.post("/import")
+def import_employees_csv(
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_hr_or_admin),
+    db: Session = Depends(get_db)
+):
+    service = EmployeeService(db)
+    contents = file.file.read()
+    reader = csv.DictReader(io.StringIO(contents.decode("utf-8")))
+    
+    imported = 0
+    errors = []
+    
+    for row in reader:
+        try:
+            data = EmployeeCreate(
+                first_name=row.get("first_name", ""),
+                last_name=row.get("last_name", ""),
+                email=row.get("email", ""),
+                designation=row.get("designation"),
+                department_id=row.get("department_id") if row.get("department_id") else None,
+                phone=row.get("phone")
+            )
+            service.create_employee(data)
+            imported += 1
+        except Exception as e:
+            errors.append({"email": row.get("email", "unknown"), "error": str(e)})
+            
+    return {"status": "success", "imported": imported, "errors": errors}
+
+
+@router.get("/org-chart")
+def get_org_chart(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from app.models.employee import Employee
+    employees = db.query(Employee).filter(Employee.status == "ACTIVE").all()
+    
+    def build_tree(emp_list, parent_id=None):
+        return [
+            {
+                "id": e.id,
+                "name": f"{e.first_name} {e.last_name}",
+                "designation": e.designation,
+                "department": e.department.name if e.department else "",
+                "photoUrl": e.photo_url,
+                "children": build_tree(emp_list, e.id)
+            }
+            for e in emp_list
+            if e.reporting_manager_id == parent_id
+        ]
+        
+    tree = build_tree(employees, None)
+    return {"tree": tree}
+
+
 @router.get("")
 def list_employees(
     department_id: Optional[str] = None,

@@ -208,19 +208,22 @@ async def bulk_screen(
         if c_name == "Unknown":
              c_name = ai_res.get("filename", "").replace(".pdf", "")
              
+        score = ai_res.get("score", 0)
+        status = "SHORTLISTED" if len(files) == 1 and score >= 85 else "SCREENING"
+
         app = Application(
             job_posting_id=job.id,
             candidate_name=c_name,
             candidate_email=ai_res.get("candidate_email", ""),
             candidate_phone=ai_res.get("candidate_phone", ""),
             resume_text=ai_res.get("raw_text", ""),
-            ai_score=ai_res.get("score", 0),
+            ai_score=score,
             ai_summary=ai_res.get("summary", ""),
             ai_skills_match=ai_res.get("skills_match", []),
             ai_red_flags=ai_res.get("red_flags", []),
             ai_details=ai_res,
             ai_recommendation=ai_res.get("recommendation", "HOLD"),
-            status="SCREENING"
+            status=status
         )
         db.add(app)
         db.commit()
@@ -279,19 +282,20 @@ async def single_screen(
     if c_name == "Unknown":
          c_name = file.filename.replace(".pdf", "")
          
+    score = ai_res.get("score", 0)
     app = Application(
         job_posting_id=job.id,
         candidate_name=c_name,
         candidate_email=ai_res.get("candidate_email", ""),
         candidate_phone=ai_res.get("candidate_phone", ""),
         resume_text=ai_res.get("raw_text", ""),
-        ai_score=ai_res.get("score", 0),
+        ai_score=score,
         ai_summary=ai_res.get("summary", ""),
         ai_skills_match=ai_res.get("skills_match", []),
         ai_red_flags=ai_res.get("red_flags", []),
         ai_details=ai_res,
         ai_recommendation=ai_res.get("recommendation", "HOLD"),
-        status="SCREENING"
+        status="SHORTLISTED" if score >= 85 else "SCREENING"
     )
     db.add(app)
     db.commit()

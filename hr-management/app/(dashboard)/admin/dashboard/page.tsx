@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Row 1: Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         {[
           { title: "Total Employees", icon: Users, val: data.totalEmployees, trend: `+${data.newHiresThisMonth > 0 ? 2.4 : 0}% vs last month`, trendIcon: TrendingUp, positive: true },
           { title: "Monthly Payroll", icon: DollarSign, val: `₹${(data.totalPayrollThisMonth || 0).toLocaleString()}`, trend: "+1.2% vs last month", trendIcon: TrendingUp, positive: true },
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
               <MoreHorizontal size={20} />
             </button>
           </div>
-          <div className="h-[280px] w-full">
+          <div className="h-48 md:h-[280px] w-full">
              <HeadcountChart data={data.headcountTrend} />
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function AdminDashboard() {
               <MoreHorizontal size={20} />
             </button>
           </div>
-          <div className="h-[280px] w-full">
+          <div className="h-48 md:h-[280px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={data.departmentBreakdown} cx="50%" cy="50%" innerRadius={70} outerRadius={100} dataKey="count" nameKey="dept">
@@ -149,7 +149,7 @@ export default function AdminDashboard() {
               <option>This Year</option>
             </select>
           </div>
-          <div className="h-[280px] w-full">
+          <div className="h-48 md:h-[280px] w-full">
              <PayrollChart data={data.payrollTrend} />
           </div>
         </div>
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
             <h3 className="text-[16px] font-bold font-headline text-card-foreground">Today's Attendance</h3>
             <span className="bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-full px-3 py-1 text-[11px] font-semibold">Live</span>
           </div>
-          <div className="h-[280px] w-full">
+          <div className="h-48 md:h-[280px] w-full">
              <AttendanceDonut data={data.attendanceToday} />
           </div>
         </div>

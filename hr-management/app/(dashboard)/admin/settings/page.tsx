@@ -36,10 +36,10 @@ export default function AdminSettingsPage() {
                   <p className="font-semibold text-card-foreground">Session Timeout</p>
                   <p className="text-sm text-muted-foreground">Automatically log out inactive users</p>
                 </div>
-                <select className="bg-muted border border-border text-card-foreground text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2">
+                <select defaultValue="1 hour" className="bg-muted border border-border text-card-foreground text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2">
                   <option>15 minutes</option>
                   <option>30 minutes</option>
-                  <option selected>1 hour</option>
+                  <option>1 hour</option>
                   <option>4 hours</option>
                 </select>
               </div>

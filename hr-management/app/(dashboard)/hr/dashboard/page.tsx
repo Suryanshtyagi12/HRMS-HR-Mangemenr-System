@@ -53,7 +53,7 @@ export default function HRDashboard() {
       </div>
 
       {/* Row 1: Stat Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
         {[
           { title: "Total Headcount", icon: Users, val: "842", trend: "+5% vs last month", trendIcon: TrendingUp, positive: true },
           { title: "Open Reqs", icon: Briefcase, val: data.openPositions, trend: "-2% vs last month", trendIcon: TrendingDown, positive: true },

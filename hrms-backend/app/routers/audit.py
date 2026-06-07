@@ -4,7 +4,7 @@ from sqlalchemy import desc
 from typing import Optional
 
 from app.database import get_db
-from app.dependencies import require_admin
+from app.dependencies import require_admin, get_current_user
 from app.models.audit import AuditLog
 from app.schemas.audit import AuditLogResponse
 
@@ -21,7 +21,7 @@ def get_audit_logs(
     action: Optional[str] = None,
     entity: Optional[str] = None,
     user_id: Optional[str] = Query(None, alias="userId"),
-    current_user = Depends(require_admin),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     try:
@@ -33,6 +33,13 @@ def get_audit_logs(
             query = query.filter(AuditLog.entity == entity)
         if user_id:
             query = query.filter(AuditLog.user_id == user_id)
+            
+        # Row-Level Security
+        if current_user.role == "EMPLOYEE":
+            query = query.filter(AuditLog.user_id == current_user.id)
+        elif current_user.role == "SENIOR_MANAGER":
+            # Just show logs related to the manager for now
+            query = query.filter(AuditLog.user_id == current_user.id)
             
         total = query.count()
         

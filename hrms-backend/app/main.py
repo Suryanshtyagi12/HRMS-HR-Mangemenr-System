@@ -9,7 +9,7 @@ from app.config import settings
 from app.routers import (
     auth, employees, attendance, payroll,
     leave, performance, recruitment,
-    dashboard, ai, notifications, audit,
+    dashboard, ai, notifications, audit, reports
 )
 
 logger = logging.getLogger(__name__)
@@ -44,6 +44,31 @@ scheduler.add_job(
     minute=0
 )
 
+def scheduled_audit_log_cleanup():
+    """Runs every day at 2 AM to clean up old audit logs (older than 90 days)"""
+    from datetime import timedelta
+    from app.models.audit import AuditLog
+    
+    cutoff_date = datetime.utcnow() - timedelta(days=90)
+    print(f"Running audit log cleanup... Deleting logs older than {cutoff_date.date()}")
+    db = SessionLocal()
+    try:
+        deleted_count = db.query(AuditLog).filter(AuditLog.created_at < cutoff_date).delete()
+        db.commit()
+        print(f"Audit log cleanup finished. Deleted {deleted_count} old records.")
+    except Exception as e:
+        db.rollback()
+        print(f"Error during audit log cleanup: {e}")
+    finally:
+        db.close()
+
+scheduler.add_job(
+    scheduled_audit_log_cleanup,
+    'cron',
+    hour=2,  # 2 AM UTC daily
+    minute=0
+)
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application startup / shutdown events."""
@@ -52,6 +77,8 @@ async def lifespan(app: FastAPI):
     scheduler.start()
     print("✓ Auto payroll scheduler started")
     print("  Runs daily at 6PM — triggers on last working day")
+    print("✓ Audit log cleanup scheduler started")
+    print("  Runs daily at 2AM — deletes logs > 90 days old")
     yield
     scheduler.shutdown()
     logger.info("HRMS Pro API shutting down…")
@@ -103,6 +130,7 @@ app.include_router(dashboard.router,     prefix="/dashboard",     tags=["Dashboa
 app.include_router(ai.router,            prefix="/ai",            tags=["AI"])
 app.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
 app.include_router(audit.router,         prefix="/audit",         tags=["Audit"])
+app.include_router(reports.router,       prefix="/reports",       tags=["Reports"])
 from app.routers import onboarding, documents
 app.include_router(onboarding.router,    prefix="/onboarding",    tags=["Onboarding"])
 app.include_router(documents.router,     prefix="/documents",     tags=["Documents"])

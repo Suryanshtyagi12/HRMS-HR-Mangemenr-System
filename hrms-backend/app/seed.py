@@ -13,6 +13,7 @@ from app.models.payroll import PayrollRun, Payslip
 from app.models.performance import PerformanceCycle, PerformanceReview, PerformanceGoal
 from app.models.recruitment import JobPosting, Application
 from app.models.notification import Notification
+from app.models.audit import AuditLog
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -154,10 +155,31 @@ def seed_data():
     db.commit()
 
     print("Setting Managers & Leave Balances...")
-    manager_emp = employees[1] # Priya Singh, VP Engineering
+    ceo = employees[0]
+    eng_mgr = employees[1]
+    manager_emp = eng_mgr
+    hr_mgr = employees[2]
+    senior_dev_1 = employees[3]
+    marketing_mgr = employees[4]
+    finance_mgr = employees[5]
+    senior_dev_2 = employees[6]
+    junior_dev = employees[7]
+    hr_recruiter = employees[8]
+
+    eng_mgr.reporting_manager_id = ceo.id
+    hr_mgr.reporting_manager_id = ceo.id
+    marketing_mgr.reporting_manager_id = ceo.id
+    finance_mgr.reporting_manager_id = ceo.id
+    senior_dev_1.reporting_manager_id = eng_mgr.id
+    senior_dev_2.reporting_manager_id = eng_mgr.id
+    junior_dev.reporting_manager_id = senior_dev_1.id
+    hr_recruiter.reporting_manager_id = hr_mgr.id
+
+    managers = [marketing_mgr.id, finance_mgr.id, senior_dev_2.id, hr_mgr.id]
+    for emp in employees[9:]:
+        emp.reporting_manager_id = random.choice(managers)
+
     for emp in employees:
-        if emp.id != manager_emp.id and emp.id != employees[0].id: # Not VP, Not CEO
-            emp.reporting_manager_id = manager_emp.id
         
         # Leave Balance
         lb = LeaveBalance(
@@ -446,6 +468,49 @@ def seed_data():
             curr += timedelta(days=1)
             
         db.commit()
+
+    print("Seeding Audit Logs...")
+    # Generate some mock audit logs for the employees created
+    for emp in employees[:15]:
+        al_create = AuditLog(
+            id=str(uuid.uuid4()),
+            user_id=users["ADMIN"].id,
+            action="CREATE_EMPLOYEE",
+            entity="EMPLOYEE",
+            entity_id=emp.id,
+            new_values={"employee_code": emp.employee_code, "name": emp.first_name + " " + emp.last_name},
+            ip_address="192.168.1.100",
+            created_at=emp.joining_date
+        )
+        db.add(al_create)
+        
+        if random.random() > 0.5:
+            al_update = AuditLog(
+                id=str(uuid.uuid4()),
+                user_id=users["HR_RECRUITER"].id,
+                action="UPDATE_EMPLOYEE",
+                entity="EMPLOYEE",
+                entity_id=emp.id,
+                old_values={"department_id": "old-dept"},
+                new_values={"department_id": emp.department_id},
+                ip_address="192.168.1.102",
+                created_at=today - timedelta(days=random.randint(1, 30))
+            )
+            db.add(al_update)
+            
+    # Mock some logins
+    for u in users.values():
+        al_login = AuditLog(
+            id=str(uuid.uuid4()),
+            user_id=u.id,
+            action="LOGIN_SUCCESS",
+            entity="USER",
+            entity_id=u.id,
+            ip_address="10.0.0.15",
+            created_at=today - timedelta(hours=random.randint(1, 48))
+        )
+        db.add(al_login)
+    db.commit()
 
     print("✅ Seeding Complete! Enjoy HRMS Pro.")
 
