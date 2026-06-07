@@ -4,7 +4,7 @@ import { FunnelChart, Funnel, LabelList, Tooltip, ResponsiveContainer, Cell } fr
 
 const COLORS = ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe', '#eff6ff'];
 
-export function HiringFunnel({ data }: { data: any[] }) {
+export function HiringFunnel({ data = [] }: { data?: any[] }) {
   if (!data || data.length === 0) return null;
 
   return (
