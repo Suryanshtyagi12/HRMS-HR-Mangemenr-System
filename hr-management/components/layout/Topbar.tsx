@@ -86,7 +86,7 @@ export function Topbar() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="p-0 bg-[#0F172A] border-r border-white/5 w-[280px] text-white">
-            <Sidebar onLinkClick={() => setMobileMenuOpen(false)} />
+            <Sidebar mobile onLinkClick={() => setMobileMenuOpen(false)} />
           </SheetContent>
         </Sheet>
 

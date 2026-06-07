@@ -76,7 +76,7 @@ const employeeNav: NavItem[] = [
   { title: 'Directory', href: '/directory', icon: BookUser, section: 'Company' },
 ];
 
-export function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
+export function Sidebar({ onLinkClick, mobile }: { onLinkClick?: () => void; mobile?: boolean }) {
   const pathname = usePathname();
   const user = useAuthStore((s) => s.user);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -228,6 +228,15 @@ export function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
       </button>
     </div>
   );
+
+  // When rendered inside the mobile Sheet, return content directly
+  if (mobile) {
+    return (
+      <div className="flex flex-col h-full w-full">
+        {SidebarContent}
+      </div>
+    );
+  }
 
   return (
     <>
